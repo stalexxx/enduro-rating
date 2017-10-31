@@ -60,13 +60,28 @@ class RestEndpoint : SparkApplication {
 
 fun main(args: Array<String>) {
     initPG_()
-    RACERS().create(skipIfExists = true, dropIfExists = false)
-    EVENTS().create(skipIfExists = true, dropIfExists = false)
-    RESULTS().create(skipIfExists = true, dropIfExists = false)
-    InsertRacer(Racer(name = "Ivan", number = 41, created = Date())).execute()
-    InsertEvent(Event(title = "кабан", date = Date())).execute()
+//    RACERS().create(skipIfExists = true, dropIfExists = false)
+//    EVENTS().create(skipIfExists = true, dropIfExists = false)
+//    RESULTS().create(skipIfExists = true, dropIfExists = false)
+
+    InsertRacer(Racer(name = "Ivan", number = 41, created = Date())).apply {
+        execute()
+    }
+
+    Event(title = "кабан", date = Date()).apply {
+        insert().execute()
+    }.let { event ->
+        Result(event = event, place = 1)
+    }.apply {
+        insert().execute()
+    }
+
+//    Result(event = SeleE)
+
+
     println(SelectRacer().list())
-    println(Event().list())
+    println(SelectEvent().list())
+    println(SelectResult().list())
 }
 
 fun ping(req: Request, res: Response): Any {

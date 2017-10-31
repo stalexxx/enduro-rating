@@ -28,7 +28,6 @@ class RACERS : Table() {
 }
 
 
-
 data class Event(
         var id: Int? = null,
         var title: String,
@@ -72,38 +71,42 @@ class SelectEvent : Query<Event>() {
     }
 }
 
-class InsertEvent(event: Event): Query<Racer>() {
-    val c = EVENTS()
-    init {
-        insert(c) {
-            c.title `=` event.title
-            c.date `=` LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())
-        }
-        generatedKeys {
-            c.id `=` getInt(1)
-        }
-    }
-}
+fun Event.insert() =
+        object : Query<Racer>() {
+            val c = EVENTS()
 
-class InsertResult(result: Result): Query<Result>() {
+            init {
+                insert(c) {
+                    c.title `=` this@insert.title
+                    c.date `=` LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())
+                }
+                generatedKeys {
+                    this@insert.id = getInt(1)
+                }
+            }
+        }
+
+
+fun Result.insert() = object : Query<Result>() {
     val c = RESULTS()
+
     init {
         insert(c) {
-            c.event `=` result.event.id
+            c.event `=` this@insert.event.id
             c.place `=` 1
 //            c.place `=` LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())
 
         }
         generatedKeys {
-            c.id `=` getInt(1)
+            this@insert.id = getInt(1)
         }
     }
 }
 
 
-
-class InsertRacer(racer: Racer): Query<Racer>() {
+class InsertRacer(racer: Racer) : Query<Racer>() {
     val c = RACERS()
+
     init {
         insert(c) {
             c.name `=` racer.name
@@ -111,7 +114,7 @@ class InsertRacer(racer: Racer): Query<Racer>() {
             c.created `=` LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())
         }
         generatedKeys {
-            c.id `=` getInt(1)
+            racer.id = getInt(1)
         }
 
     }
@@ -135,6 +138,7 @@ class SelectRacer : Query<Racer>() {
     }
 
 }
+
 class SelectResult : Query<Result>() {
     val c = RESULTS()
 
