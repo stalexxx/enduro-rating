@@ -13,7 +13,6 @@
         <appengine.app.version>1</appengine.app.version>
         <appengine.sdk.version>1.9.58</appengine.sdk.version>
 
-        <objectify.version>5.1.21</objectify.version>
         <guava.version>23.3-jre</guava.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,6 +28,10 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven/</url>
         </repository>
     </repositories>
 
@@ -63,11 +66,6 @@
           <artifactId>guava</artifactId>
           <version>${guava.version}</version>
         </dependency>
-        <dependency>
-          <groupId>com.googlecode.objectify</groupId>
-          <artifactId>objectify</artifactId>
-          <version>${objectify.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.google.cloud.sql</groupId>
@@ -92,6 +90,30 @@
             <groupId>no.tornado</groupId>
             <artifactId>kdbc</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.requery</groupId>
+            <artifactId>requery</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.requery</groupId>
+            <artifactId>requery-kotlin</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.requery</groupId>
+            <artifactId>requery-processor</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.requery</groupId>
+            <artifactId>requery-jackson</artifactId>
+            <version>1.4.0</version>
         </dependency>
 <!-- [END Objectify_Dependencies] -->
 

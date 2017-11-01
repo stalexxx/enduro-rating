@@ -1,11 +1,15 @@
-package com.example.guestbook.tables
+package com.example.guestbook
 
+import io.requery.Generated
+import io.requery.Key
+import kdbc.Insert
 import kdbc.Query
 import kdbc.Table
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Date
+import java.util.*
+
 
 class EVENTS : Table() {
     val id = column<Int>("id", "serial not null primary key ")
@@ -27,9 +31,11 @@ class RACERS : Table() {
     val created = column<Date>("created_at", "timestamp with time zone")
 }
 
-
 data class Event(
+        @get:Key
+        @get:Generated
         var id: Int? = null,
+
         var title: String,
         var date: Date
 ) {
@@ -44,6 +50,7 @@ data class Racer(
 ) {
     constructor(t: RACERS) : this(t.id(), t.name()!!, t.number(), t.created()!!)
 }
+
 
 data class Result(
         var id: Int? = null,
@@ -72,7 +79,7 @@ class SelectEvent : Query<Event>() {
 }
 
 fun Event.insert() =
-        object : Query<Racer>() {
+        object : Insert() {
             val c = EVENTS()
 
             init {
@@ -87,7 +94,7 @@ fun Event.insert() =
         }
 
 
-fun Result.insert() = object : Query<Result>() {
+fun Result.insert() = object : Insert() {
     val c = RESULTS()
 
     init {
@@ -155,4 +162,30 @@ class SelectResult : Query<Result>() {
         }
     }
 
+}
+
+private fun testKdbc() {
+//    initPG_()
+    RACERS().create(skipIfExists = true, dropIfExists = false)
+    EVENTS().create(skipIfExists = true, dropIfExists = false)
+    RESULTS().create(skipIfExists = true, dropIfExists = false)
+
+    InsertRacer(Racer(name = "Ivan", number = 41, created = Date())).apply {
+        execute()
+    }
+
+    Event(title = "кабан", date = Date()).apply {
+        insert().execute()
+    }.let { event ->
+        Result(event = event, place = 1)
+    }.apply {
+        insert().execute()
+    }
+
+//    Result(event = SeleE)
+
+
+    println(SelectRacer().list())
+    println(SelectEvent().list())
+    println(SelectResult().list())
 }

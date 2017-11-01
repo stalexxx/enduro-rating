@@ -2,6 +2,8 @@ package com.example.guestbook
 
 import com.example.guestbook.tables.*
 import com.google.appengine.repackaged.com.google.gson.GsonBuilder
+import io.requery.kotlin.eq
+import io.requery.sql.*
 import kdbc.KDBC
 import org.postgresql.ds.PGSimpleDataSource
 import spark.Request
@@ -10,6 +12,7 @@ import spark.Spark
 import spark.servlet.SparkApplication
 import java.sql.Connection
 import java.sql.DriverManager
+import java.time.*
 import java.util.*
 
 private fun initPG() {
@@ -23,6 +26,7 @@ private fun initPG() {
     KDBC.debug = true
 
 }
+
 private fun initPG_(dbName: String = "db1", user: String = "db1", pw: String = "db1") {
     KDBC.setDataSource(PGSimpleDataSource().apply {
         databaseName = dbName
@@ -43,46 +47,78 @@ class RestEndpoint : SparkApplication {
     }
 
 
-
     override fun init() {
         Spark.port(8080)
         Spark.get("/ping", ::ping)
         Spark.get("/event/:id") { req, res ->
-            SelectEvent().byId(req.params("id").toInt())?.toJson() ?: "not found" }
+            SelectEvent().byId(req.params("id").toInt())?.toJson() ?: "not found"
+        }
 
         Spark.get("/racer/:id") { req, res ->
-            SelectRacer().byId(req.params("id").toInt())?.toJson() ?: "not found" }
+            SelectRacer().byId(req.params("id").toInt())?.toJson() ?: "not found"
+        }
 
         Spark.get("/result/:id") { req, res ->
-            SelectResult().byId(req.params("id").toInt())?.toJson() ?: "not found" }
+            SelectResult().byId(req.params("id").toInt())?.toJson() ?: "not found"
+        }
     }
 }
 
 fun main(args: Array<String>) {
-    initPG_()
-//    RACERS().create(skipIfExists = true, dropIfExists = false)
-//    EVENTS().create(skipIfExists = true, dropIfExists = false)
-//    RESULTS().create(skipIfExists = true, dropIfExists = false)
-
-    InsertRacer(Racer(name = "Ivan", number = 41, created = Date())).apply {
-        execute()
+    val ds = PGSimpleDataSource().apply {
+        databaseName = "db1"
+        this.user = "db1"
+        this.password = "db1"
+        serverName = "localhost"
+        portNumber = 5432
     }
+    SchemaModifier(ds, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS)
 
-    Event(title = "кабан", date = Date()).apply {
-        insert().execute()
-    }.let { event ->
-        Result(event = event, place = 1)
-    }.apply {
-        insert().execute()
-    }
+    val configuration = KotlinConfiguration(dataSource = ds, model = Models.DEFAULT, useDefaultLogging = true)
+    val data = KotlinEntityDataStore<Any>(configuration)
 
-//    Result(event = SeleE)
+    TestDataGenerator(configuration, data)
 
-
-    println(SelectRacer().list())
-    println(SelectEvent().list())
-    println(SelectResult().list())
+//    data.invoke {
+//
+//        //        val event1Entity = insert(Event1Entity().apply { title = "lalala" })
+////        val racer1Entity = insert(Racer1Entity().apply { name = "Ivan Ivanov" })
+//
+//
+//        val insert = insert(Result1Entity().apply {
+//            place = 1
+//            racer = Racer1Entity().apply {
+//                name = "Ivan Ivanov"
+//                number = 41
+//                created_at = LocalDateTime.now()
+//            }
+//            event = Event1Entity().apply {
+//                title = "lalala"
+//                startDate = LocalDate.now()
+//            }
+//        })
+//
+//        val result = select(Event1::class) where (Event1::id eq 1) limit 5
+//
+//
+//        val entityDataStore = EntityDataStore<Any>(configuration)
+//        var mapper = EntityMapper(Models.DEFAULT, entityDataStore)
+//        val writer = mapper.writer()
+//
+//
+//
+//        result.get().forEach {
+//            print(writer.writeValueAsString(it))
+//        }
+//
+//    }
 }
+
+
+
+
+
+
 
 fun ping(req: Request, res: Response): Any {
     val connection = connection()
