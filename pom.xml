@@ -5,8 +5,8 @@
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
 
-    <groupId>com.example.guestbook</groupId>
-    <artifactId>guestbook</artifactId>
+    <groupId>com.aostrovskiy.rating</groupId>
+    <artifactId>rating-backend</artifactId>
 
 <!-- [START set_versions] -->
     <properties>
@@ -42,6 +42,8 @@
             <url>http://repo1.maven.org/maven/</url>
         </repository>
     </repositories>
+
+
 
     <dependencies>
 
@@ -193,6 +195,8 @@
         <!-- for hot reload of the web application-->
         <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
         <plugins>
+
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -289,6 +293,21 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>com.jelastic</groupId>-->
+                <!--<artifactId>jelastic-maven-plugin</artifactId>-->
+                <!--<version>1.8.2</version>-->
+                <!--<configuration>-->
+                    <!--<email>aostrovskiy@ya.ru</email>-->
+                    <!--<password>xHhixAESlc</password>-->
+                    <!--<context>[specify the context if you need it]</context>-->
+                    <!--<environment>env-7386909.mircloud.host</environment>-->
+                    <!--<comment>[insert comment if you need it]</comment>-->
+
+                    <!--<api_hoster>[put here API of your hoster]</api_hoster>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+
         </plugins>
     </build>
 </project>

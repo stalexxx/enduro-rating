@@ -154,8 +154,8 @@ fun main(args: Array<String>) {
 }
 
 private fun data(): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
-    val ds = simpleRemoteDS()//localConnnection()
-//    val ds = localConnnection()
+//    val ds = simpleRemoteDS()//localConnnection()
+    val ds = localConnnection()
     SchemaModifier(ds, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS)
 
     val configuration = KotlinConfiguration(dataSource = ds, model = Models.DEFAULT, useDefaultLogging = true
@@ -173,9 +173,9 @@ private fun data(): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
 
 private fun localConnnection(): PGSimpleDataSource {
     return PGSimpleDataSource().apply {
-        databaseName = "db1"
-        this.user = "db1"
-        this.password = "db1"
+        databaseName = "postgres"
+        this.user = "postgres"
+        this.password = "postgres"
         serverName = "localhost"
         portNumber = 5432
     }
