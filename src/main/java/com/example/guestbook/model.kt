@@ -1,6 +1,8 @@
 package com.example.guestbook
 
+import com.fasterxml.jackson.annotation.JsonView
 import io.requery.*
+import io.requery.converter.EnumStringConverter
 import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -8,7 +10,7 @@ import javax.persistence.JoinColumn
 
 @io.requery.Table(name = "events")
 @Entity
-interface Event1 : Persistable {
+interface Event : Persistable {
 
     @get:Key
     @get:Generated
@@ -18,44 +20,67 @@ interface Event1 : Persistable {
 
     var startDate: LocalDate
 
+    var country: String
+    var city: String
+
     @get:OneToMany
-    var results: List<Result1>
+    var results: List<Result>
+
+    @get:ManyToOne
+    var season: Season
 }
 
 @io.requery.Table(name = "racers")
 @Entity
-interface Racer1 : Persistable {
+interface Racer : Persistable {
     @get:Key
     @get:Generated
+    @get:JsonView(Views.Rating::class)
     var id: Int
 
+    @get:JsonView(Views.Rating::class)
     var name: String
 
+    @get:JsonView(Views.Rating::class)
     var number: Int
 
     var created_at: LocalDateTime
 
     @get:OneToMany
-    var results: List<Result1>
+    var results: List<Result>
 }
 
+enum class FinalResult {OK, DISQUALIFICATION, INJURY}
+class FinalResultConverter : EnumStringConverter<FinalResult>(FinalResult::class.java);
 
 @io.requery.Table(name = "results")
 @Entity
-interface Result1 : Persistable {
+interface Result : Persistable {
     @get:Key
     @get:Generated
     var id: Int
 
     @get:ManyToOne
     @get:Column(name = "event_id")
-    var event: Event1
+    var event: Event
 
     @get:ManyToOne
     @get:Column(name = "racer_id")
-    var racer: Racer1
+    var racer: Racer
 
-    var place: Int
+    @get:Column(name = "reg_number")
+    var regNumber:Int
+
+    @get:Convert(FinalResultConverter::class)
+    @get:Column(name = "final_result")
+    var result: FinalResult
+
+    var position: Int
+
+    @get:Column(name = "rate_delta")
+    var rateDelta: Double
+
+
 
 }
 
@@ -63,11 +88,61 @@ interface Result1 : Persistable {
 @Entity
 interface Rating : Persistable {
 
+    @get:Key
+    @get:Generated
+    @get:JsonView(Views.Rating::class)
+    var id: Int
+
+    @get:ManyToOne
+//    @get:Column(name = "racer_id")
+    @get:JoinColumn(name = "racer_id")
+    @get:JsonView(Views.Rating::class)
+    var racer: Racer
+
     @get:OneToOne
     @get:JoinColumn(name = "result_id")
-    var results: Result1
+    var results: Result
 
-    var rating: Int
+    @get:JsonView(Views.Rating::class)
+    var rating: Double
 
-    var created_at: Timestamp
+    @get:ManyToOne
+    @get:Column(name = "season_id")
+    var season: Season
+
+    @get:Column(name = "created_at")
+    var createdAt: Timestamp
+}
+
+@io.requery.Table(name = "seasons")
+@Entity
+interface Season: Persistable {
+    @get:Key
+    @get:Generated
+    var id: Int
+
+    @get:Column(name = "start_date")
+    var startDate: LocalDate
+
+    @get:Column(name = "end_date")
+    var endDate: LocalDate
+
+    var description: String
+
+    @get:OneToMany
+    var events: List<Event>
+}
+
+
+@io.requery.Table(name = "classes")
+@Entity
+interface RacerClass : Persistable {
+
+}
+
+class Views {
+    class Racer
+    class Rating
+
+
 }

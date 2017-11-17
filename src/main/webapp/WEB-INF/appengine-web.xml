@@ -10,11 +10,22 @@
     <system-properties>
         <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
 
-        <property name="cloudsql" value="jdbc:google:postgresql://${INSTANCE_CONNECTION_NAME}/${database}?user=${user}&amp;password=${password}" />
-        <property name="cloudsql-local" value="jdbc:postgresql://google/${database}?useSSL=false&amp;cloudSqlInstance=${INSTANCE_CONNECTION_NAME}&amp;socketFactory=com.google.cloud.sql.postgres.SocketFactory&amp;user=${user}&amp;password=${password}" />
+        <property name="INSTANCE_CONNECTION_NAME" value="enduro-184119:us-central1:pgenduro"/>
+        <property name="database" value="enduro"/>
+        <property name="user" value="enduro"/>
+        <property name="password" value="password"/>
+
+        <property name="cloudsql" value="jdbc:postgresql://enduro-184119:us-central1:pgenduro/enduro?user=enduro&amp;password=enduro" />
+        <property name="cloudsql-local" value="jdbc:postgresql://google/enduro?useSSL=false&amp;cloudSqlInstance=enduro-184119:us-central1:pgenduro&amp;socketFactoryArg=enduro-184119:us-central1:pgenduro&amp;socketFactory=com.google.cloud.sql.postgres.SocketFactory&amp;user=enduro&amp;password=enduro" />
+
+
 
 
     </system-properties>
+
+    <!--<manual-scaling>-->
+        <!--<instances>5</instances>-->
+    <!--</manual-scaling>-->
 
 
 

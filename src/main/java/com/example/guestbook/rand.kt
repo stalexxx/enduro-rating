@@ -36,6 +36,9 @@ object Rand {
     private fun dateDuration(min: Int = 1, max: Int = 7): Duration = Duration.ofDays(int(min, max).toLong()) + timeDuration()
 
     private fun datetimeDuration(): Duration = dateDuration() + timeDuration()
+
     fun <T: Any> randomSublist(racers: List<T>): List<T> = racers.map { if (nextBool) it else null }. filter { it != null }.map {it!!}.toList()
+
+    fun enum(values: Array<FinalResult>) = values[randNumber(values.size - 1)]
 
 }
