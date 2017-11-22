@@ -39,7 +39,7 @@
         <!--</repository>-->
         <repository>
             <id>central</id>
-            <url>http://repo1.maven.org/maven/</url>
+            <url>http://central.maven.org/maven2</url>
         </repository>
     </repositories>
 
