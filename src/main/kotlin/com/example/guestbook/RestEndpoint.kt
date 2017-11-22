@@ -2,8 +2,7 @@ package com.example.guestbook
 
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectWriter
-import com.google.appengine.api.ThreadManager
-import com.google.appengine.repackaged.com.google.gson.GsonBuilder
+//import com.google.appengine.api.ThreadManager
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.requery.cache.EntityCacheBuilder
@@ -183,7 +182,7 @@ private fun localConnnection(): PGSimpleDataSource {
 
 private fun remoteConnection(): DataSource =
         HikariDataSource(HikariConfig().apply {
-            threadFactory = ThreadManager.backgroundThreadFactory()
+//            threadFactory = ThreadManager.backgroundThreadFactory()
             initializationFailTimeout = -1
             dataSource = simpleRemoteDS()
         }).apply {
@@ -245,20 +244,5 @@ fun Any.toJson(writer: ObjectWriter): String {
     return writer.writeValueAsString(this)
 }
 
-
-fun <T : Any> T.toJson(): String {
-
-
-    val gson = GsonBuilder().run {
-        disableHtmlEscaping()
-        setPrettyPrinting()
-        create()
-    }
-    val o = this
-    return when (o) {
-        is String -> o
-        else -> gson.toJson(o)
-    }
-}
 
 fun Request.id() = this.params("id")
