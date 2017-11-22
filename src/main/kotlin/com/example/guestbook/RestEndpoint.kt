@@ -154,7 +154,7 @@ fun main(args: Array<String>) {
 
 private fun data(): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
 //    val ds = simpleRemoteDS()//localConnnection()
-    val ds = herokuConnnection()
+    val ds = remotePooledConnection()
     SchemaModifier(ds, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS)
 
     val configuration = KotlinConfiguration(dataSource = ds, model = Models.DEFAULT, useDefaultLogging = true
@@ -191,11 +191,11 @@ private fun herokuConnnection(): PGSimpleDataSource {
     }
 }
 
-private fun remoteConnection(): DataSource =
+private fun remotePooledConnection(): DataSource =
         HikariDataSource(HikariConfig().apply {
 //            threadFactory = ThreadManager.backgroundThreadFactory()
             initializationFailTimeout = -1
-            dataSource = simpleRemoteDS()
+            dataSource = herokuConnnection()
         }).apply {
 
         }
