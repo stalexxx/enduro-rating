@@ -14,7 +14,7 @@ import io.requery.sql.KotlinConfiguration
 import io.requery.sql.KotlinEntityDataStore
 import io.requery.sql.SchemaModifier
 import io.requery.sql.TableCreationMode
-import org.ehcache.jsr107.EhcacheCachingProvider
+//import org.ehcache.jsr107.EhcacheCachingProvider
 import org.postgresql.ds.PGPooledConnection
 import org.postgresql.ds.PGPoolingDataSource
 import org.postgresql.ds.PGSimpleDataSource
@@ -162,8 +162,8 @@ private fun data(): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
             ,
             cache = EntityCacheBuilder(Models.DEFAULT)
                     .useReferenceCache(true)
-                    .useCacheManager(EhcacheCachingProvider().cacheManager)
-                    .useSerializableCache(true)
+//                    .useCacheManager(EhcacheCachingProvider().cacheManager)
+//                    .useSerializableCache(true)
                     .build()
     )
 
