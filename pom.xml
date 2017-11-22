@@ -33,10 +33,10 @@
 <!-- [END set_versions] -->
 
     <repositories>
-        <!--<repository>-->
-            <!--<id>jitpack.io</id>-->
-            <!--<url>https://jitpack.io</url>-->
-        <!--</repository>-->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
         <repository>
             <id>central</id>
             <url>http://repo1.maven.org/maven/</url>
