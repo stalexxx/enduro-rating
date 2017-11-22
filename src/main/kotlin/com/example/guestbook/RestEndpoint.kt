@@ -154,7 +154,7 @@ fun main(args: Array<String>) {
 
 private fun data(): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
 //    val ds = simpleRemoteDS()//localConnnection()
-    val ds = localConnnection()
+    val ds = herokuConnnection()
     SchemaModifier(ds, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS)
 
     val configuration = KotlinConfiguration(dataSource = ds, model = Models.DEFAULT, useDefaultLogging = true
@@ -176,6 +176,15 @@ private fun localConnnection(): PGSimpleDataSource {
         this.user = "postgres"
         this.password = "postgres"
         serverName = "localhost"
+        portNumber = 5432
+    }
+}
+private fun herokuConnnection(): PGSimpleDataSource {
+    return PGSimpleDataSource().apply {
+        databaseName = "d5g9t5l9mkp17o"
+        this.user = "sdzwnnnasglvqx"
+        this.password = "af6833687a169ec83e164bde89b67f29a2b079dabcc2c8a0683bfb765cf1bc95"
+        serverName = "ec2-174-129-195-73.compute-1.amazonaws.com\n"
         portNumber = 5432
     }
 }
