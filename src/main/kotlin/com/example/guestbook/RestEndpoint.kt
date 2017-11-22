@@ -184,8 +184,10 @@ private fun herokuConnnection(): PGSimpleDataSource {
         databaseName = "d5g9t5l9mkp17o"
         this.user = "sdzwnnnasglvqx"
         this.password = "af6833687a169ec83e164bde89b67f29a2b079dabcc2c8a0683bfb765cf1bc95"
-        serverName = "ec2-174-129-195-73.compute-1.amazonaws.com\n"
+        serverName = "ec2-174-129-195-73.compute-1.amazonaws.com"
         portNumber = 5432
+        ssl = true
+        sslfactory = "org.postgresql.ssl.NonValidatingFactory"
     }
 }
 
