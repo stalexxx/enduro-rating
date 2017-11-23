@@ -5,6 +5,13 @@ import com.fasterxml.jackson.databind.ObjectWriter
 //import com.google.appengine.api.ThreadManager
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import io.ktor.application.call
+import io.ktor.http.ContentType
+import io.ktor.response.respondText
+import io.ktor.routing.get
+import io.ktor.routing.routing
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import io.requery.cache.EntityCacheBuilder
 import io.requery.jackson.EntityMapper
 import io.requery.kotlin.desc
@@ -35,9 +42,7 @@ class RestEndpoint : SparkApplication {
         ds = data
         this.configuration = configuration
         entityMapper = EntityMapper(Models.DEFAULT, ds.data)
-
     }
-
 
     override fun init() {
         val mapper = entityMapper
@@ -108,6 +113,15 @@ class RestEndpoint : SparkApplication {
 
 
 fun main(args: Array<String>) {
+
+    embeddedServer(Netty, 8080) {
+        routing {
+            get("/") {
+                call.respondText("Hello, world!", ContentType.Text.Html)
+            }
+        }
+    }.start(wait = true)
+
     val (configuration, data) = data(localConnnection())
 
 //    SchemaModifier(configuration).createTables(TableCreationMode.DROP_CREATE)
@@ -118,7 +132,7 @@ fun main(args: Array<String>) {
     data.invoke {
 
 
-//
+        //
 //        select(Racer::class)
 //                .get().toList().forEach { println(it) }
 //
@@ -146,9 +160,9 @@ fun main(args: Array<String>) {
 
         val season = select(Season::class).where(Season::id eq 1).get().first()
         val toList = select(Rating::class).where(Rating::season eq season).get().toList()
-        var toJson = toList.map { it.toJson(ratingWriter)}
+        var toJson = toList.map { it.toJson(ratingWriter) }
         print(toJson)
-        toJson = toList.map { it.toJson(ratingWriter)}
+        toJson = toList.map { it.toJson(ratingWriter) }
         print(toJson)
 
 
@@ -183,6 +197,7 @@ private fun localConnnection(): PGSimpleDataSource {
         portNumber = 5432
     }
 }
+
 private fun herokuConnnection(): PGSimpleDataSource {
     return PGSimpleDataSource().apply {
         databaseName = "d5g9t5l9mkp17o"
@@ -197,7 +212,7 @@ private fun herokuConnnection(): PGSimpleDataSource {
 
 private fun remotePooledConnection(dataSource: DataSource): DataSource =
         HikariDataSource(HikariConfig().apply {
-//            threadFactory = ThreadManager.backgroundThreadFactory()
+            //            threadFactory = ThreadManager.backgroundThreadFactory()
             initializationFailTimeout = -1
             this.dataSource = dataSource
         }).apply {
@@ -221,10 +236,11 @@ private fun simpleRemoteDS(): DataSource {
     }
 }
 
-class ExPGDs: PGSimpleDataSource() {
+class ExPGDs : PGSimpleDataSource() {
     val pgPooledConnection by lazy {
         PGPooledConnection(DriverManager.getConnection(System.getProperty("cloudsql-local")), false)
     }
+
     override fun getConnection() = DriverManager.getConnection(System.getProperty("cloudsql-local")) //pgPooledConnection.connection
 //        try {
 //            val env = ApiProxy.getCurrentEnvironment()
@@ -249,7 +265,6 @@ class ExPGDs: PGSimpleDataSource() {
 }
 
 fun init() {
-
 
 
 }
