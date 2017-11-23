@@ -31,7 +31,7 @@ class RestEndpoint : SparkApplication {
     var entityMapper: EntityMapper
 
     init {
-        val (configuration, data) = data()
+        val (configuration, data) = data(remotePooledConnection(herokuConnnection()))
         ds = data
         this.configuration = configuration
         entityMapper = EntityMapper(Models.DEFAULT, ds.data)
@@ -108,7 +108,7 @@ class RestEndpoint : SparkApplication {
 
 
 fun main(args: Array<String>) {
-    val (configuration, data) = data()
+    val (configuration, data) = data(localConnnection())
 
 //    SchemaModifier(configuration).createTables(TableCreationMode.DROP_CREATE)
 //    TestDataController(RatingRepository(configuration, data))
@@ -156,9 +156,9 @@ fun main(args: Array<String>) {
 
 }
 
-private fun data(): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
+private fun data(dataSource: DataSource): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
 //    val ds = simpleRemoteDS()//localConnnection()
-    val ds = remotePooledConnection()
+    val ds = dataSource
     SchemaModifier(ds, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS)
 
     val configuration = KotlinConfiguration(dataSource = ds, model = Models.DEFAULT, useDefaultLogging = true
@@ -195,11 +195,11 @@ private fun herokuConnnection(): PGSimpleDataSource {
     }
 }
 
-private fun remotePooledConnection(): DataSource =
+private fun remotePooledConnection(dataSource: DataSource): DataSource =
         HikariDataSource(HikariConfig().apply {
 //            threadFactory = ThreadManager.backgroundThreadFactory()
             initializationFailTimeout = -1
-            dataSource = localConnnection()
+            this.dataSource = dataSource
         }).apply {
 
         }
