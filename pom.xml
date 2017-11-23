@@ -25,6 +25,9 @@
         <password>enduro</password>
         <database>enduro</database>
         <sqlURL>jdbc:postgresql://google/${database}?useSSL=false&amp;socketFactoryArg=${INSTANCE_CONNECTION_NAME}&amp;socketFactory=com.google.cloud.sql.postgres.SocketFactory&amp;user=${user}&amp;password=${password}</sqlURL>
+
+        <ktor.version>0.9.0</ktor.version>
+
     </properties>
 
     <prerequisites>
@@ -33,6 +36,11 @@
 <!-- [END set_versions] -->
 
     <repositories>
+
+        <repository>
+            <id>ktor</id>
+            <url>http://dl.bintray.com/kotlin/ktor</url>
+        </repository>
         <!--<repository>-->
             <!--<id>jitpack.io</id>-->
             <!--<url>https://jitpack.io</url>-->
@@ -44,6 +52,8 @@
     </repositories>
 
     <dependencies>
+
+
         <!--<dependency>-->
             <!--<groupId>javax.cache</groupId>-->
             <!--<artifactId>cache-api</artifactId>-->
@@ -57,6 +67,11 @@
         <!--</dependency>-->
 
         <!-- Compile/runtime dependencies -->
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-core</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
