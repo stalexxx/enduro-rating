@@ -45,6 +45,10 @@ class RestEndpoint : SparkApplication {
 
         val writer = mapper.writer()
 
+        val racerWriter = mapper.writerWithView(Views.Racer::class.java)
+        val ratingWriter = mapper.writerWithView(Views.Rating::class.java)
+
+
         Spark.port(8080)
         Spark.get("/") { _, _ -> "ping".toJson(writer) }
 
@@ -85,7 +89,7 @@ class RestEndpoint : SparkApplication {
                     orderBy(Rating::rating.desc())
                     .get()
                     .toList()
-                    .toJson(writer)
+                    .toJson(ratingWriter)
         }
 
         Spark.get("/init_db") { req, res ->
@@ -173,8 +177,8 @@ private fun data(): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
 private fun localConnnection(): PGSimpleDataSource {
     return PGSimpleDataSource().apply {
         databaseName = "postgres"
-        this.user = "postgres"
-        this.password = "postgres"
+        this.user = "alex"
+        this.password = ""
         serverName = "localhost"
         portNumber = 5432
     }
@@ -195,7 +199,7 @@ private fun remotePooledConnection(): DataSource =
         HikariDataSource(HikariConfig().apply {
 //            threadFactory = ThreadManager.backgroundThreadFactory()
             initializationFailTimeout = -1
-            dataSource = herokuConnnection()
+            dataSource = localConnnection()
         }).apply {
 
         }

@@ -1,5 +1,7 @@
 package com.example.guestbook
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.JsonView
 import io.requery.*
 import io.requery.converter.EnumStringConverter
@@ -44,9 +46,11 @@ interface Racer : Persistable {
     @get:JsonView(Views.Rating::class)
     var number: Int
 
+    @get:JsonView(Views.Rating::class)
     var created_at: LocalDateTime
 
     @get:OneToMany
+    @get:JsonBackReference
     var results: List<Result>
 }
 
@@ -66,6 +70,7 @@ interface Result : Persistable {
 
     @get:ManyToOne
     @get:Column(name = "racer_id")
+
     var racer: Racer
 
     @get:Column(name = "reg_number")
@@ -97,6 +102,7 @@ interface Rating : Persistable {
 //    @get:Column(name = "racer_id")
     @get:JoinColumn(name = "racer_id")
     @get:JsonView(Views.Rating::class)
+    @get:JsonManagedReference
     var racer: Racer
 
     @get:OneToOne
