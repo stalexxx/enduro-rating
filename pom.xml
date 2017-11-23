@@ -45,6 +45,12 @@
             <!--<id>jitpack.io</id>-->
             <!--<url>https://jitpack.io</url>-->
         <!--</repository>-->
+
+        <repository>
+            <id>kotlinx</id>
+            <url>http://dl.bintray.com/kotlin/kotlinx</url>
+        </repository>
+
         <repository>
             <id>central</id>
             <url>http://central.maven.org/maven2</url>
@@ -72,6 +78,8 @@
             <artifactId>ktor-server-core</artifactId>
             <version>${ktor.version}</version>
         </dependency>
+
+
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -246,22 +254,22 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>com.google.appengine</groupId>
-                <artifactId>appengine-maven-plugin</artifactId>
-                <version>${appengine.sdk.version}</version>
-                <configuration>
-                    <enableJarClasses>false</enableJarClasses>
-                    <!-- Comment in the below snippet to bind to all IPs instead of just localhost -->
-                    <!-- address>0.0.0.0</address>
-                    <port>8080</port -->
-                    <!-- Comment in the below snippet to enable local debugging with a remote debugger
-                         like those included with Eclipse or IntelliJ -->
-                    <jvmFlags>
-                      <jvmFlag>-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n</jvmFlag>
-                    </jvmFlags>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>com.google.appengine</groupId>-->
+                <!--<artifactId>appengine-maven-plugin</artifactId>-->
+                <!--<version>${appengine.sdk.version}</version>-->
+                <!--<configuration>-->
+                    <!--<enableJarClasses>false</enableJarClasses>-->
+                    <!--&lt;!&ndash; Comment in the below snippet to bind to all IPs instead of just localhost &ndash;&gt;-->
+                    <!--&lt;!&ndash; address>0.0.0.0</address>-->
+                    <!--<port>8080</port &ndash;&gt;-->
+                    <!--&lt;!&ndash; Comment in the below snippet to enable local debugging with a remote debugger-->
+                         <!--like those included with Eclipse or IntelliJ &ndash;&gt;-->
+                    <!--<jvmFlags>-->
+                      <!--<jvmFlag>-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n</jvmFlag>-->
+                    <!--</jvmFlags>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -305,6 +313,9 @@
                 </executions>
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
+                    <args>
+                        <arg>-Xcoroutines=enable</arg>
+                    </args>
                 </configuration>
             </plugin>
             <plugin>
