@@ -8,48 +8,35 @@ import io.requery.cache.EntityCacheBuilder
 import io.requery.jackson.EntityMapper
 import io.requery.sql.KotlinConfiguration
 import io.requery.sql.KotlinEntityDataStore
-import io.requery.sql.SchemaModifier
-import io.requery.sql.TableCreationMode
 import org.postgresql.ds.PGPoolingDataSource
 import org.postgresql.ds.PGSimpleDataSource
 import javax.sql.DataSource
 
-class Config {
-    var ds: KotlinEntityDataStore<Any>
-    var configuration: KotlinConfiguration
-    var entityMapper: EntityMapper
+class Config(
+        val dataSource: DataSource = remotePooledConnection(herokuConnnection()),
+        val logging: Boolean = true
+) {
+    val configuration: KotlinConfiguration
+        get() = KotlinConfiguration(
+                dataSource = dataSource,
+                model = Models.DEFAULT,
+                useDefaultLogging = logging,
+                cache = EntityCacheBuilder(Models.DEFAULT)
+                        .useReferenceCache(logging)
+                        .build()
+        )
 
-    init {
-        val (configuration, data) = data(remotePooledConnection(herokuConnnection()))
-        ds = data
-        this.configuration = configuration
-        entityMapper = EntityMapper(Models.DEFAULT, ds.data)
-    }
+    val ds: KotlinEntityDataStore<Any>
+        get() = KotlinEntityDataStore(configuration)
 
-    fun writer() : ObjectWriter {
+    val entityMapper: EntityMapper
+        get() = EntityMapper(Models.DEFAULT, ds.data)
+
+    fun writer(): ObjectWriter {
         val mapper = entityMapper
         mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
         return mapper.writer()
     }
-}
-
-
-fun data(dataSource: DataSource): Pair<KotlinConfiguration, KotlinEntityDataStore<Any>> {
-//    val ds = simpleRemoteDS()//localConnnection()
-    val ds = dataSource
-    SchemaModifier(ds, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS)
-
-    val configuration = KotlinConfiguration(dataSource = ds, model = Models.DEFAULT, useDefaultLogging = true
-            ,
-            cache = EntityCacheBuilder(Models.DEFAULT)
-                    .useReferenceCache(true)
-//                    .useCacheManager(EhcacheCachingProvider().cacheManager)
-//                    .useSerializableCache(true)
-                    .build()
-    )
-
-    val data = KotlinEntityDataStore<Any>(configuration)
-    return Pair(configuration, data)
 }
 
 fun localConnnection(): PGSimpleDataSource {

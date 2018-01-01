@@ -3,7 +3,6 @@ package com.aostrovskiy.rating
 //import com.google.appengine.api.ThreadManager
 //import org.ehcache.jsr107.EhcacheCachingProvider
 import com.fasterxml.jackson.databind.ObjectWriter
-import io.requery.jackson.EntityMapper
 import io.requery.kotlin.desc
 import io.requery.kotlin.eq
 import io.requery.sql.KotlinEntityDataStore
@@ -17,7 +16,7 @@ import spark.servlet.SparkApplication
 import java.sql.DriverManager
 
 class RestEndpoint : SparkApplication {
-    val config : Config = Config()
+    val config : Config = Config(logging = true)
     val ds: KotlinEntityDataStore<Any>
         get() = config.ds
 
@@ -78,7 +77,7 @@ class RestEndpoint : SparkApplication {
         }
 
         Spark.get("/init_data") { req, res ->
-            TestDataController(RatingRepository(config.configuration, ds))
+            TestDataController(RatingService(config.configuration, ds))
             "done".toJson(writer)
         }
 
@@ -88,49 +87,49 @@ class RestEndpoint : SparkApplication {
 
 
 fun main(args: Array<String>) {
-    val (configuration, data) = data(localConnnection())
-
-//    SchemaModifier(configuration).createTables(TableCreationMode.DROP_CREATE)
-//    TestDataController(RatingRepository(configuration, data))
-
-    val entityMapper = EntityMapper(Models.DEFAULT, data.data)
-
-    data.invoke {
-
-
-        //
-//        select(Racer::class)
-//                .get().toList().forEach { println(it) }
+//    val (configuration, data) = data(localConnnection())
 //
-//        select(Event::class)
-//                .get().toList().forEach { println(it) }
+////    SchemaModifier(configuration).createTables(TableCreationMode.DROP_CREATE)
+////    TestDataController(RatingRepository(configuration, data))
 //
-//        select(Season::class)
-//                .get().toList().forEach { println(it) }
+//    val entityMapper = EntityMapper(Models.DEFAULT, data.data)
 //
-//        select(Result::class)
-//                .get().toList().forEach { println(it) }
-
-//        val toList = select(Rating::class).
-//                orderBy(Rating::rating.desc())
-//                .get().toList()
-//        print(toList)
-
-        val mapper = entityMapper
-//        mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
-
-        val racerWriter = mapper.writerWithView(Views.Racer::class.java)
-        val ratingWriter = mapper.writer()
-//        val ratingWriter = mapper.writerWithView(Views.Rating::class.java)
-
-//        select(Racer::class).get().toList()
-
-        val season = select(Season::class).where(Season::id eq 1).get().first()
-        val toList = select(Rating::class).where(Rating::season eq season).get().toList()
-        var toJson = toList.map { it.toJson(ratingWriter) }
-        print(toJson)
-
-    }
+//    data.invoke {
+//
+//
+//        //
+////        select(Racer::class)
+////                .get().toList().forEach { println(it) }
+////
+////        select(Event::class)
+////                .get().toList().forEach { println(it) }
+////
+////        select(Season::class)
+////                .get().toList().forEach { println(it) }
+////
+////        select(Result::class)
+////                .get().toList().forEach { println(it) }
+//
+////        val toList = select(Rating::class).
+////                orderBy(Rating::rating.desc())
+////                .get().toList()
+////        print(toList)
+//
+//        val mapper = entityMapper
+////        mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
+//
+//        val racerWriter = mapper.writerWithView(Views.Racer::class.java)
+//        val ratingWriter = mapper.writer()
+////        val ratingWriter = mapper.writerWithView(Views.Rating::class.java)
+//
+////        select(Racer::class).get().toList()
+//
+//        val season = select(Season::class).where(Season::id eq 1).get().first()
+//        val toList = select(Rating::class).where(Rating::season eq season).get().toList()
+//        var toJson = toList.map { it.toJson(ratingWriter) }
+//        print(toJson)
+//
+//    }
 
 }
 

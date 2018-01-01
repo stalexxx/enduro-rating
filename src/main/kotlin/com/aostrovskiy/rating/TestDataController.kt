@@ -6,16 +6,16 @@ import java.time.LocalDateTime.now
 import kotlin.reflect.full.createInstance
 
 
-class TestDataController(private var repository: RatingRepository) {
+class TestDataController(private var service: RatingService) {
 
     init {
         generateResults(
-                generateRacers(7),
-                generateEvents(5))
+                generateRacers(3),
+                generateEvents(2))
     }
 
     private fun generateResults(racers: List<Racer>, events: List<Event>) {
-        repository.resetRating(events.first().season)
+        service.resetRating(events.first().season)
         events.forEach { evt ->
             var plc = 1
             Rand.randomSublist(racers).map { rc ->
@@ -31,7 +31,7 @@ class TestDataController(private var repository: RatingRepository) {
 
 
 
-                repository.handleResultSet(it.toList())
+                service.handleResultSet(it.toList())
             }
         }
     }
@@ -42,14 +42,14 @@ class TestDataController(private var repository: RatingRepository) {
                 endDate = Rand.localDate(1)
                 description = Rand.randName(3)
             }.let {
-                repository.addSeason(it)
+                service.addSeason(it)
             }.let {
                 return generate<EventEntity>(count) {
                     title = randName(2)
                     startDate = Rand.localDate(365)
                     season = it
                 }.map {
-                    repository.addEvent(it)
+                    service.addEvent(it)
                 }.toList()
             }
 
@@ -60,7 +60,7 @@ class TestDataController(private var repository: RatingRepository) {
                 number = randNumber(999)
                 created_at = now()
             }.map {
-                repository.addRacer(it)
+                service.addRacer(it)
             }.toList()
 }
 
