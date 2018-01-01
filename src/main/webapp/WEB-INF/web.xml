@@ -15,7 +15,7 @@
         <filter-class>spark.servlet.SparkFilter</filter-class>
         <init-param>
             <param-name>applicationClass</param-name>
-            <param-value>com.example.guestbook.RestEndpoint</param-value>
+            <param-value>com.aostrovskiy.rating.RestEndpoint</param-value>
         </init-param>
     </filter>
     <filter-mapping>

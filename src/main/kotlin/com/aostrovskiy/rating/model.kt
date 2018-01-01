@@ -1,4 +1,4 @@
-package com.example.guestbook
+package com.aostrovskiy.rating
 
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonManagedReference
@@ -29,6 +29,7 @@ interface Event : Persistable {
     var results: List<Result>
 
     @get:ManyToOne
+    @get:JsonManagedReference
     var season: Season
 }
 
@@ -70,7 +71,7 @@ interface Result : Persistable {
 
     @get:ManyToOne
     @get:Column(name = "racer_id")
-
+    @get:JsonManagedReference
     var racer: Racer
 
     @get:Column(name = "reg_number")
@@ -136,6 +137,7 @@ interface Season: Persistable {
     var description: String
 
     @get:OneToMany
+    @get:JsonBackReference
     var events: List<Event>
 }
 

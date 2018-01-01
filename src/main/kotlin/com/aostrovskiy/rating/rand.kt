@@ -1,4 +1,4 @@
-package com.example.guestbook
+package com.aostrovskiy.rating
 
 import java.time.Duration
 import java.time.Instant
