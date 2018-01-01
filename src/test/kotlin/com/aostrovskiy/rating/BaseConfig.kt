@@ -2,41 +2,46 @@ package com.aostrovskiy.rating
 
 import io.kotlintest.ProjectConfig
 import io.kotlintest.ProjectExtension
+import io.requery.sql.KotlinEntityDataStore
 import io.requery.sql.SchemaModifier
 import io.requery.sql.TableCreationMode
 import org.h2.jdbcx.JdbcConnectionPool
 import org.h2.jdbcx.JdbcDataSource
 import javax.sql.DataSource
 
-object BaseConfig : ProjectConfig(){
+object BaseConfig : ProjectConfig() {
 
     val config = Config(h2Connnection(), false)
 
     private fun h2Connnection(): DataSource {
-
-        val dataSource = JdbcDataSource()
-        dataSource.setURL("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1")
-        dataSource.user = "sa"
-        dataSource.password = "sa"
+        val dataSource = JdbcDataSource().apply {
+            setURL("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1")
+            user = "h2"
+            password = ""
+        }
         return JdbcConnectionPool.create(dataSource)
     }
 
     override val extensions: List<ProjectExtension>
-        get() = listOf(TestExtension)
+        get() = listOf(GenerateExtension)
 
-    override fun beforeAll() {
-
-        RatingService(configuration = config.configuration, data = config.ds).also {
-            SchemaModifier(config.configuration).createTables(TableCreationMode.DROP_CREATE)
-            TestDataController(it)
-        }
-
-    }
 }
 
-object TestExtension : ProjectExtension {
+object GenerateExtension : ProjectExtension {
+
+
+    operator fun invoke(init: TestDataGenerator.() -> Unit) : KotlinEntityDataStore<Any> {
+        generator.reset()
+        generator.init()
+
+        return BaseConfig.config.ds
+    }
+
+    val generator: TestDataGenerator =
+            RatingService(configuration = BaseConfig.config.configuration, data = BaseConfig.config.ds).let { TestDataGenerator(it) }
+
     override fun beforeAll() {
-        println("before all extension")
+        SchemaModifier(BaseConfig.config.configuration).createTables(TableCreationMode.DROP_CREATE)
     }
 
     override fun afterAll() {

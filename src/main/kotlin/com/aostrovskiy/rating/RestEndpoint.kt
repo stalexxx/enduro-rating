@@ -16,10 +16,9 @@ import spark.servlet.SparkApplication
 import java.sql.DriverManager
 
 class RestEndpoint : SparkApplication {
-    val config : Config = Config(logging = true)
+    val config: Config = Config(logging = true)
     val ds: KotlinEntityDataStore<Any>
         get() = config.ds
-
 
 
     override fun init() {
@@ -77,7 +76,7 @@ class RestEndpoint : SparkApplication {
         }
 
         Spark.get("/init_data") { req, res ->
-            TestDataController(RatingService(config.configuration, ds))
+            TestDataGenerator(RatingService(config.configuration, ds)).generate()
             "done".toJson(writer)
         }
 
